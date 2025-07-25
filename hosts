@@ -1,0 +1,12 @@
+[bx50s]
+#bxTarget-[1:254]
+#bxTarget-122
+#bxTarget-123
+192.168.1.123
+
+[bx50s:vars]
+ansible_user=root
+ansible_ssh_key=~/.ssh/pi
+
+[yocto]
+rTarget-205-122

@@ -1,0 +1,18 @@
+---
+- name: Install RAUC bundle on multiple devices
+  hosts: servers
+  become: true
+  tasks:
+    - name: Copy RAUC bundle to remote
+      ansible.builtin.copy:
+        src: /root/v7.0.12.raucb
+        dest: /root/v7.0.12.raucb
+        mode: '0644'
+
+    - name: Install the RAUC bundle
+      ansible.builtin.shell: rauc install /root/v7.0.12.raucb
+
+    - name: Reboot the machine with tryboot
+      ansible.builtin.shell: reboot '0 tryboot'
+      async: 1
+      poll: 0

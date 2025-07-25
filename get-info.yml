@@ -1,0 +1,29 @@
+- name: Get BX50 logs
+  hosts: bx50s
+  become: false
+  tasks:
+   - name: Get BX50 hostname
+     ansible.builtin.shell: hostname >> {{ ansible_host }}.txt
+
+   - name: Get BX50 date
+     ansible.builtin.shell: date  >> {{ ansible_host }}.txt
+
+   - name: Get BX50 docker containers
+     ansible.builtin.shell: docker ps  >> {{ ansible_host }}.txt
+
+   - name: Get debugger service status
+     ansible.builtin.shell: systemctl status debugger.service  >> {{ ansible_host }}.txt
+
+   - name: Get kernel logs
+     ansible.builtin.fetch:
+      src: "{{ item }}"
+      dest: "./bx50-logs/{{ ansible_host }}/"
+      flat: yes
+     with_fileglob:
+       - "/var/log/*kern*"
+
+   - name: Save file in the little laptop
+     ansible.builtin.fetch:
+      src: "{{ ansible_host }}.txt"
+      dest: "./bx50-logs/"
+      flat: true

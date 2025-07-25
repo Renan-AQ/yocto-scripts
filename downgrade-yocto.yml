@@ -1,0 +1,37 @@
+---
+- name: Upgrade target devices with RAUC
+  hosts: rauc_targets
+  become: true
+  vars:
+    rauc_file: "v7.0.10.raucb"
+    upgrade_history_path: "/anzen/upgrade_history/v7.0.10"
+    autoboot_file: "/autoboot/autoboot.txt"
+
+  tasks:
+
+    - name: Copy RAUC bundle to remote
+      copy:
+        src: "./{{ rauc_file }}"
+        dest: "/root/{{ rauc_file }}"
+        mode: '0644'
+
+    - name: Install RAUC bundle
+      command: "rauc install /root/{{ rauc_file }}"
+
+    - name: Clean old upgrade history and create new folder
+      file:
+        path: "{{ upgrade_history_path }}"
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Update autoboot file values (swap 2, 3, 4 as per logic)
+      shell: |
+        sed -i -E 's/3/4/' {{ autoboot_file }}
+        sed -i -E 's/2/3/' {{ autoboot_file }}
+        sed -i -E 's/4/2/' {{ autoboot_file }}
+
+    - name: Reboot device
+      reboot:
+        reboot_timeout: 300

@@ -1,0 +1,7 @@
+---
+- name: Get Yocto version
+  hosts: yocto
+  become: false
+  tasks:
+   - name: Get Yocto version
+     ansible.builtin.shell: cat /etc/os-release
