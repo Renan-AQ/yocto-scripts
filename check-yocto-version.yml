@@ -1,7 +1,14 @@
 ---
-- name: Get Yocto version
-  hosts: yocto
-  become: false
+- name: Check Yocto OS version
+  hosts: yocto_devices
+  gather_facts: no
   tasks:
-   - name: Get Yocto version
-     ansible.builtin.shell: cat /etc/os-release
+    - name: Get /etc/os-release content
+      ansible.builtin.shell: cat /etc/os-release
+      register: os_release_output
+
+    - name: Show OS release info
+      ansible.builtin.debug:
+        msg: |
+          {{ inventory_hostname }} ({{ ansible_host }}):
+          {{ os_release_output.stdout }}
